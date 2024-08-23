@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -3365,7 +3363,6 @@
 
     <script>
         let editMode = false;
-        let sectionCount = 95; // Начальное количество секций
 
         // Режим редактирования
         function toggleEditMode() {
@@ -3433,7 +3430,7 @@
 
         // Добавление новой секции
         function addSection() {
-            sectionCount++;
+            const sectionCount = document.querySelectorAll('.content > div[id^="section"]').length + 1;
             const newSectionId = `section${sectionCount}`;
             const newSection = document.createElement('div');
             newSection.id = newSectionId;
