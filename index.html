@@ -1,11 +1,12 @@
 
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Торговый Дом Магистраль</title>
- <style>
+    <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -62,7 +63,7 @@
 <body>
     <div class="sidebar" id="sidebar">
         <h2>Содержание</h2>
-		<div id="sidebar-links">
+	<div id="sidebar-links">
         <a href="#section1">ТДМ</a>
         <a href="#section2">Алгоритм работы склада</a>
         <a href="#section3">Склад расценки</a>
@@ -160,8 +161,10 @@
         <a href="#section95">Какую трубу можно использовать в качестве столбов для забора из сетки?</a>
      </div>
         <button onclick="addSection()">Добавить секцию</button>
-        <button onclick="removeSection()">Удалить секцию</button>
+        <select id="section-selector"></select>
+        <button onclick="removeSelectedSection()">Удалить выбранную секцию</button>
     </div>
+
 
     <div class="content" id="content">
         <div id="editor-controls">
@@ -3402,18 +3405,29 @@
             URL.revokeObjectURL(url);
         }
 
-        // Обновление бокового меню
+        // Обновление бокового меню и выпадающего списка
         function updateSidebarLinks() {
             const sidebarLinks = document.getElementById('sidebar-links');
+            const sectionSelector = document.getElementById('section-selector');
             sidebarLinks.innerHTML = ''; // Очищаем текущее содержимое
+            sectionSelector.innerHTML = ''; // Очищаем текущие опции
+
             const sections = document.querySelectorAll('.content > div[id^="section"]');
             sections.forEach(section => {
                 const id = section.id;
                 const title = section.querySelector('h1') ? section.querySelector('h1').innerText : 'Без заголовка';
+
+                // Обновляем ссылки в боковом меню
                 const link = document.createElement('a');
                 link.href = `#${id}`;
                 link.innerText = title;
                 sidebarLinks.appendChild(link);
+
+                // Обновляем выпадающий список
+                const option = document.createElement('option');
+                option.value = id;
+                option.text = title;
+                sectionSelector.appendChild(option);
             });
         }
 
@@ -3432,13 +3446,13 @@
             document.getElementById(newSectionId).scrollIntoView();
         }
 
-        // Удаление последней секции
-        function removeSection() {
-            const sections = document.querySelectorAll('.content > div[id^="section"]');
-            if (sections.length > 0) {
-                const lastSection = sections[sections.length - 1];
-                document.getElementById('content').removeChild(lastSection);
-                sectionCount--;
+        // Удаление выбранной секции
+        function removeSelectedSection() {
+            const sectionSelector = document.getElementById('section-selector');
+            const selectedSectionId = sectionSelector.value;
+            if (selectedSectionId) {
+                const sectionToRemove = document.getElementById(selectedSectionId);
+                document.getElementById('content').removeChild(sectionToRemove);
                 updateSidebarLinks();
             }
         }
