@@ -161,6 +161,8 @@
         <button onclick="addSection()">Добавить секцию</button>
         <select id="section-selector"></select>
         <button onclick="removeSelectedSection()">Удалить выбранную секцию</button>
+        <button onclick="moveSection('up')">Переместить вверх</button>
+        <button onclick="moveSection('down')">Переместить вниз</button>
     </div>
 
 
@@ -3361,7 +3363,7 @@
 
 
 
-    <script>
+     <script>
         let editMode = false;
 
         // Режим редактирования
@@ -3381,7 +3383,7 @@
             alert('Изменения сохранены!');
         }
 
-        // Загрузка изменений 
+        // Загрузка контента
         function loadContent() {
             const savedContent = localStorage.getItem('savedContent');
             if (savedContent) {
@@ -3452,6 +3454,39 @@
                 document.getElementById('content').removeChild(sectionToRemove);
                 updateSidebarLinks();
             }
+        }
+
+        // Перемещение выбранного раздела вверх или вниз
+        function moveSection(direction) {
+            const sectionSelector = document.getElementById('section-selector');
+            const selectedSectionId = sectionSelector.value;
+            if (!selectedSectionId) return;
+
+            const sections = document.querySelectorAll('.content > div[id^="section"]');
+            let index = -1;
+
+            // Найдите индекс выбранного раздела
+            sections.forEach((section, i) => {
+                if (section.id === selectedSectionId) index = i;
+            });
+
+            if (index === -1) return;
+
+            const sectionToMove = sections[index];
+            const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+            if (targetIndex < 0 || targetIndex >= sections.length) return;
+
+            const targetSection = sections[targetIndex];
+
+            // Переместите раздел
+            if (direction === 'up') {
+                sectionToMove.parentNode.insertBefore(sectionToMove, targetSection);
+            } else {
+                sectionToMove.parentNode.insertBefore(sectionToMove, targetSection.nextSibling);
+            }
+
+            updateSidebarLinks();
         }
 
         // Загрузка контента при старте
