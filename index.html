@@ -3406,28 +3406,29 @@
 
         // Обновление бокового меню и выпадающего списка
         function updateSidebarLinks() {
-            const sidebarLinks = document.getElementById('sidebar-links');
-            const sectionSelector = document.getElementById('section-selector');
-            sidebarLinks.innerHTML = ''; // Очищаем текущее содержимое
-            sectionSelector.innerHTML = ''; // Очищаем текущие опции
+    const sidebarLinks = document.getElementById('sidebar-links');
+    const sectionSelector = document.getElementById('section-selector');
+    sidebarLinks.innerHTML = ''; // Очищаем текущее содержимое
+    sectionSelector.innerHTML = ''; // Очищаем текущие опции
 
-            const sections = document.querySelectorAll('.content > div[id^="section"]');
-            sections.forEach(section => {
-                const id = section.id;
-                const title = section.querySelector('h1') ? section.querySelector('h1').innerText : 'Без заголовка';
+    const sections = document.querySelectorAll('.content > div[id^="section"]');
+    sections.forEach(section => {
+        const id = section.id;
+        const title = section.querySelector('h1') ? section.querySelector('h1').innerText : 'Без заголовка';
 
-                // Обновляем ссылки в боковом меню
-                const link = document.createElement('a');
-                link.href = `#${id}`;
-                link.innerText = title;
-                sidebarLinks.appendChild(link);
+        // Обновляем ссылки в боковом меню
+        const link = document.createElement('a');
+        link.href = `#${id}`;
+        link.innerText = title;
+        sidebarLinks.appendChild(link);
 
-                // Обновляем выпадающий список
-                const option = document.createElement('option');
-                option.value = id;
-                option.text = title;
-                sectionSelector.appendChild(option);
-            });
+        // Обновляем выпадающий список
+        const option = document.createElement('option');
+        option.value = id;
+        option.text = title;
+        sectionSelector.appendChild(option);
+    });
+
         }
 
         // Добавление новой секции
@@ -3458,36 +3459,32 @@
 
         // Перемещение выбранного раздела вверх или вниз
         function moveSection(direction) {
-            const sectionSelector = document.getElementById('section-selector');
-            const selectedSectionId = sectionSelector.value;
-            if (!selectedSectionId) return;
+    const sectionSelector = document.getElementById('section-selector');
+    const selectedSectionId = sectionSelector.value;
+    if (!selectedSectionId) return;
 
-            const sections = document.querySelectorAll('.content > div[id^="section"]');
-            let index = -1;
+    const sections = Array.from(document.querySelectorAll('.content > div[id^="section"]'));
+    const index = sections.findIndex(section => section.id === selectedSectionId);
 
-            // Найдите индекс выбранного раздела
-            sections.forEach((section, i) => {
-                if (section.id === selectedSectionId) index = i;
-            });
+    if (index === -1) return;
 
-            if (index === -1) return;
+    const sectionToMove = sections[index];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
-            const sectionToMove = sections[index];
-            const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= sections.length) return;
 
-            if (targetIndex < 0 || targetIndex >= sections.length) return;
+    const targetSection = sections[targetIndex];
 
-            const targetSection = sections[targetIndex];
+    if (direction === 'up') {
+        sectionToMove.parentNode.insertBefore(sectionToMove, targetSection);
+    } else {
+        sectionToMove.parentNode.insertBefore(sectionToMove, targetSection.nextSibling);
+    }
 
-            // Переместите раздел
-            if (direction === 'up') {
-                sectionToMove.parentNode.insertBefore(sectionToMove, targetSection);
-            } else {
-                sectionToMove.parentNode.insertBefore(sectionToMove, targetSection.nextSibling);
-            }
+    // Обновляем боковое меню и выпадающий список после перемещения
+    updateSidebarLinks();
+}
 
-            updateSidebarLinks();
-        }
 
         // Загрузка контента при старте
         window.onload = loadContent;
