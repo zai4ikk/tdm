@@ -1,0 +1,28 @@
+name: Auto Commit index.html
+
+on:
+  push:
+    paths:
+      - "index.html"  # Укажите путь к файлу, который хотите отслеживать
+  workflow_dispatch:  # Позволяет запускать workflow вручную через интерфейс GitHub Actions
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2  # Загружает репозиторий
+
+      - name: Check if index.html changed
+        run: |
+          git diff --exit-code --quiet index.html || echo "File index.html changed"
+        # Проверка на изменения файла
+
+      - name: Commit and push changes
+        if: success()  # Если файл изменён
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          git add index.html  # Добавляем в коммит только файл index.html
+          git commit -m "Автоматическое обновление index.html" || echo "No changes to commit"
+          git push origin main  # Пушим изменения в ветку main
